@@ -382,8 +382,16 @@ function setupUI(){
   qs('input[name="pointsMode"]').forEach(r=> r.addEventListener('change', e=>{ if(e.target.value==='effort'){ q('#effort-options').classList.remove('hidden'); q('#manual-option').classList.add('hidden'); } else { q('#effort-options').classList.add('hidden'); q('#manual-option').classList.remove('hidden'); } }));
   Sortable.create(q('#active-list'), {animation:150, onEnd:saveTaskOrder});
   Sortable.create(q('#archived-list'), {animation:150, onEnd:saveTaskOrder});
+  // enable ordering for simple lists
+  if(q('#triggers-list')) Sortable.create(q('#triggers-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#triggers-list').children).map(li=>li.dataset.id); state.triggers = ids.map(id=>state.triggers.find(t=>t.id===id)); DB.save(state); }});
+  if(q('#wishes-list')) Sortable.create(q('#wishes-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#wishes-list').children).map(li=>li.dataset.id); state.wishes = ids.map(id=>state.wishes.find(w=>w.id===id)); DB.save(state); }});
+  if(q('#questions-list')) Sortable.create(q('#questions-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#questions-list').children).map(li=>li.dataset.id); state.questions = ids.map(id=>state.questions.find(qi=>qi.id===id)); DB.save(state); }});
+  if(q('#rules-list')) Sortable.create(q('#rules-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#rules-list').children).map(li=>li.dataset.id); state.rules = ids.map(id=>state.rules.find(r=>r.id===id)); DB.save(state); }});
   qs('#sidebar .nav-button').forEach(btn => btn.addEventListener('click', (e) => { const viewId = e.currentTarget.dataset.view; switchView(viewId); }));
   const createTriggerBtn = q('#create-trigger-btn'); if(createTriggerBtn) createTriggerBtn.addEventListener('click', ()=> openTriggerModal());
+  // enable ordering for vault and inventory modals (if present)
+  if(q('#vault-list')) Sortable.create(q('#vault-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#vault-list').children).map(li=>li.dataset.id); state.vault = ids.map(id=>state.vault.find(v=>v.id===id)); DB.save(state); }});
+  if(q('#inventory-list')) Sortable.create(q('#inventory-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#inventory-list').children).map(li=>li.dataset.id); state.inventory = ids.map(id=>state.inventory.find(i=>i.invId===id)); DB.save(state); }});
   q('#create-item-btn')?.addEventListener('click',()=>openItemModal());
   q('#create-wish-btn')?.addEventListener('click', ()=> openWishModal());
   q('#create-question-btn')?.addEventListener('click', ()=> openQuestionModal());

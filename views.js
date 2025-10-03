@@ -9,14 +9,7 @@ export function initApp(initialState){
   state = initialState;
   state.questions = state.questions || [];
   state.rules = state.rules || [];
-  // seed samples if empty for UX
-  if(!state.tasks.length && !state.store.length && state.points===0){
-    state.tasks.push({id:uid(),title:'Leer 30 min',emoji:'📚',desc:'Lectura de desarrollo personal',due:null,points:500,archived:false,completed:false,everCompleted:false});
-    state.tasks.push({id:uid(),title:'Limpiar cocina',emoji:'🧹',desc:'15 minutos',due:null,points:1000,archived:false,completed:false,everCompleted:false});
-    state.store.push({id:uid(),name:'Ver una película',desc:'Noche de película',cost:1500,img:null});
-    state.wishes = state.wishes || [];
-    DB.save(state);
-  }
+  // removed automatic seeding of sample data so user data is never overwritten or replaced
 
   renderAll();
   setupUI();

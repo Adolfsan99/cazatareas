@@ -16,3 +16,18 @@ export function calcLevel(state){
   return Math.floor((state.points||0)/10000);
 }
 
+/* New: create a shallow Proxy that auto-saves on any property set/delete */
+export function createAutoSaveState(obj, saveFn){
+  return new Proxy(obj, {
+    set(target, prop, value){
+      const res = Reflect.set(target, prop, value);
+      try{ saveFn(target); }catch(e){}
+      return res;
+    },
+    deleteProperty(target, prop){
+      const res = Reflect.deleteProperty(target, prop);
+      try{ saveFn(target); }catch(e){}
+      return res;
+    }
+  });
+}

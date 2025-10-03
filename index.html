@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🥷Cazatareas</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "sortablejs": "https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/modular/sortable.esm.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>🥷Cazatareas</h1>
+      <div class="header-controls">
+        <div class="points-display">Puntos: <span id="points">0</span></div>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <nav id="sidebar">
+        <button data-view="tasks" class="nav-button active">📋Tareas</button>
+        <button data-view="triggers" class="nav-button">⚡Gatillos</button>
+        <button data-view="wishes" class="nav-button">🌠Deseos</button>
+        <button data-view="questions" class="nav-button">❓Preguntas</button>
+        <button data-view="rules" class="nav-button">📜Reglas</button>
+        <button data-view="store" class="nav-button">🛒Tienda</button>
+        <button data-view="settings" class="nav-button">⚙️Ajustes</button>
+      </nav>
+
+      <div id="content-views">
+        
+        <!-- 1. Task List View (Default) -->
+        <section id="view-tasks" class="view active-view">
+          <div class="panel-header">
+            <h2>📋Tareas</h2>
+            <div style="display:flex;gap:8px" class="task-view-controls">
+              <button id="open-vault-modal-btn">📦 Almacén de Tareas</button>
+              <button id="new-task-btn" class="primary">➕ Nueva Tarea</button>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <div class="panel-header column-header">
+                <h3>Empezar ahora</h3>
+              </div>
+              <ul id="active-list" class="task-list"></ul>
+            </div>
+
+            <div class="column">
+              <div class="panel-header column-header">
+                <h3>Archivadas</h3>
+              </div>
+              <ul id="archived-list" class="task-list"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Task Vault View -->
+        
+        <!-- Placeholder views for new sidebar items -->
+        <section id="view-triggers" class="view hidden-view">
+          <div class="panel-header"><h2>⚡Gatillos</h2>
+            <div class="store-controls">
+              <button id="create-trigger-btn" class="primary">➕ Crear Gatillo</button>
+            </div>
+          </div>
+          <div class="column" style="padding:16px;background:transparent;border:none;">
+            <p class="small" style="color:var(--color-muted)">Un gatillo es una situación que te recuerda hacer algo. Revisa tus gatillos de forma frecuente para adquirir hábitos.</p>
+            <ul id="triggers-list" class="triggers-list" style="margin-top:12px"></ul>
+          </div>
+        </section>
+
+        <section id="view-wishes" class="view hidden-view">
+          <div class="panel-header"><h2>🌠Deseos</h2>
+            <div class="store-controls">
+              <button id="create-wish-btn" class="primary">➕ Crear Deseo</button>
+            </div>
+          </div>
+          <div class="column" style="padding:16px;background:transparent;border:none;">
+            <p class="small" style="color:var(--color-muted)">Un deseo es algo que quieres lograr o conseguir; guárdalo aquí para recordarlo.</p>
+            <ul id="wishes-list" class="triggers-list" style="margin-top:12px"></ul>
+          </div>
+        </section>
+
+        <section id="view-questions" class="view hidden-view">
+          <div class="panel-header"><h2>❓Preguntas</h2>
+            <div class="store-controls">
+              <button id="create-question-btn" class="primary">➕ Crear Pregunta</button>
+            </div>
+          </div>
+          <div class="column" style="padding:16px;background:transparent;border:none;">
+            <p class="small" style="color:var(--color-muted)">Una pregunta te ayuda a reflexionar o decidir; guarda la pregunta y, si quieres, su respuesta aquí.</p>
+            <ul id="questions-list" class="triggers-list" style="margin-top:12px"></ul>
+          </div>
+        </section>
+
+        <section id="view-rules" class="view hidden-view">
+          <div class="panel-header"><h2>📜Reglas</h2>
+            <div class="store-controls">
+              <button id="create-rule-btn" class="primary">➕ Crear Regla</button>
+            </div>
+          </div>
+          <div class="column" style="padding:16px;background:transparent;border:none;">
+            <p class="small" style="color:var(--color-muted)">Una regla es una instrucción simple que te ayuda a automatizar decisiones o comportamientos. Úsalas para recordar principios o criterios que faciliten elegir acciones consistentes.</p>
+            <ul id="rules-list" class="triggers-list" style="margin-top:12px"></ul>
+          </div>
+        </section>
+
+        <!-- 3. Store View -->
+        <section id="view-store" class="view hidden-view">
+          <div class="panel-header">
+            <h2>🛒Tienda</h2>
+            <div class="store-controls">
+              <button id="open-inventory-modal-btn">🎁 Recompensas (<span id="inv-count-button">0</span>)</button>
+              <button id="create-item-btn" class="primary">➕ Crear Objeto</button>
+            </div>
+          </div>
+          <ul id="store-list" class="store-list"></ul>
+
+          
+        </section>
+
+        <!-- 4. Settings View (empty for now) -->
+        <section id="view-settings" class="view hidden-view">
+          <div class="panel-header">
+            <h2>⚙️Ajustes</h2>
+          </div>
+          <div class="column" style="padding:16px;background:transparent;border:none;">
+            <!-- Vista de ajustes vacía por ahora -->
+            <p class="small" style="color:var(--color-muted)">Aquí podrás configurar opciones más adelante.</p>
+
+            <!-- New: Partida container for save/load -->
+            <div class="panel-header" style="margin-top:16px;flex-direction:column;align-items:flex-start;">
+              <h3 style="margin-bottom:8px">Partida</h3>
+              <div style="display:flex;gap:8px;">
+                <button id="save-game-btn" class="primary">💾 Guardar partida</button>
+                <button id="load-game-btn">📂 Cargar partida</button>
+                <input id="game-file-input" type="file" accept="application/json" style="display:none" />
+                <button id="reset-game-btn">🔄 Reiniciar juego</button>
+                <button id="full-reset-btn" class="delete">🧨 Reiniciar todo</button>
+              </div>
+              <p class="small" style="color:var(--color-muted);margin-top:8px">Usa estas opciones para exportar e importar los datos de la aplicación (localStorage).</p>
+            </div>
+
+          </div>
+        </section>
+      </div>
+    </div>
+
+
+    <!-- Modals (Forms only) -->
+    <div id="modal-backdrop" class="hidden"></div>
+
+    <div id="task-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <h3 id="task-modal-title">Nueva Tarea</h3>
+      <form id="task-form">
+        <label>Nombre
+          <input name="title" required maxlength="80" />
+        </label>
+
+        <label>Icono
+          <input name="emoji" id="emoji-input" placeholder="Emoji o carácter (pegar aquí)" maxlength="4" />
+          <div class="small" style="margin-top:6px;color:var(--color-muted)">Puedes pegar cualquier emoji aquí.</div>
+        </label>
+
+        <label>Descripción
+          <textarea name="desc" rows="3"></textarea>
+        </label>
+
+        <label>Fecha de finalización
+          <input type="date" name="due" />
+        </label>
+
+        <fieldset>
+          <legend>Puntos</legend>
+          <label><input type="radio" name="pointsMode" value="effort" checked /> Nivel de Esfuerzo</label>
+          <label><input type="radio" name="pointsMode" value="manual" /> Asignación Numérica</label>
+
+          <div id="effort-options">
+            <select name="effort">
+              <option value="500">1 - Soportable (500)</option>
+              <option value="1000">2 - Molesto (1000)</option>
+              <option value="2000">3 - Difícil (2000)</option>
+              <option value="3500">4 - Agobiante (3500)</option>
+              <option value="5000">5 - Insoportable (5000)</option>
+            </select>
+          </div>
+
+          <div id="manual-option" class="hidden">
+            <input type="number" name="manualPoints" min="0" placeholder="Valor en puntos" />
+          </div>
+        </fieldset>
+
+        <div class="modal-actions">
+          <button type="submit" class="primary">Guardar</button>
+          <button type="button" id="cancel-task">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="item-modal" class="modal hidden">
+      <h3 id="item-modal-title">Crear Objeto</h3>
+      <form id="item-form">
+        <label>Nombre
+          <input name="name" required maxlength="80" />
+        </label>
+        <label>Descripción
+          <textarea name="desc" rows="2"></textarea>
+        </label>
+        <label>Valor (puntos)
+          <input type="number" name="cost" min="0" required />
+        </label>
+        <label>Imagen (JPG opcional URL)
+          <input name="img" type="url" placeholder="https://..." />
+        </label>
+        <div class="modal-actions">
+          <button type="submit" class="primary">Guardar</button>
+          <button type="button" id="cancel-item">Cancelar</button>
+          <button type="button" id="delete-item" class="delete hidden">Eliminar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Task Vault Modal -->
+    <div id="vault-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <h3 id="vault-modal-title">Almacén de Tareas</h3>
+      <div class="vault-stats">
+        Total completadas: <span id="vault-count">0</span> | Nivel: <span id="vault-level">0</span>
+      </div>
+      <ul id="vault-list" class="task-list"></ul>
+      <div class="modal-actions">
+        <button type="button" id="close-vault">Cerrar</button>
+      </div>
+    </div>
+    
+    <!-- Inventory/Rewards Modal -->
+    <div id="inventory-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <h3 id="inventory-modal-title">Recompensas (<span id="inv-count-modal">0</span>)</h3>
+      <ul id="inventory-list" class="store-list"></ul>
+      <div class="modal-actions">
+        <button type="button" id="close-inventory">Cerrar</button>
+      </div>
+    </div>
+
+    <!-- Trigger Modal -->
+    <div id="trigger-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <h3 id="trigger-modal-title">Crear Gatillo</h3>
+      <form id="trigger-form">
+        <label>Situación / Disparador
+          <input name="when" required maxlength="80" placeholder="Me levanto" />
+        </label>
+        <label>Acción / Entonces
+          <input name="then" required maxlength="80" placeholder="Tomo la pastilla" />
+        </label>
+        <div class="modal-actions">
+          <button type="submit" class="primary">Guardar</button>
+          <button type="button" id="cancel-trigger">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Wish Modal -->
+    <div id="wish-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <h3 id="wish-modal-title">Crear Deseo</h3>
+      <form id="wish-form">
+        <label>Deseo
+          <input name="wish" required maxlength="140" placeholder="Escribe tu deseo..." />
+        </label>
+        <div class="modal-actions">
+          <button type="submit" class="primary">Guardar</button>
+          <button type="button" id="cancel-wish">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Question Modal -->
+    <div id="question-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <h3 id="question-modal-title">Crear Pregunta</h3>
+      <form id="question-form">
+        <label>Pregunta
+          <input name="qtext" required maxlength="140" placeholder="¿Qué deberías revisar?" />
+        </label>
+        <label>Contestar (opcional)
+          <input name="answer" maxlength="300" placeholder="Escribe la respuesta..." />
+        </label>
+        <div class="modal-actions">
+          <button type="submit" class="primary">Guardar</button>
+          <button type="button" id="cancel-question">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Rule Modal -->
+    <div id="rule-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <h3 id="rule-modal-title">Crear Regla</h3>
+      <form id="rule-form">
+        <label>Regla
+          <input name="ruleText" required maxlength="140" placeholder="Escribe tu regla..." />
+        </label>
+        <div class="modal-actions">
+          <button type="submit" class="primary">Guardar</button>
+          <button type="button" id="cancel-rule">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

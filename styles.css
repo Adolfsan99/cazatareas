@@ -1,0 +1,345 @@
+:root{
+  --color-primary: #d742f5; /* replaced gold/yellow with magenta */
+  --color-accent: #58d89b; /* verde más suave en modo oscuro */
+  --color-success: #2ecc71;
+  --color-danger: #e06a66;
+  --color-bg-main: #1f2226; /* fondo general: gris muy oscuro pero no negro */
+  --color-bg-card: #25282c; /* tarjetas ligeramente más claras */
+  --color-bg-item: #2b2e33; /* ítems un poco más claros que el fondo de tarjeta */
+  --color-text: #e9ecef; /* texto claro para buen contraste */
+  --color-muted: #9aa199; /* texto secundario */
+  --color-border: rgba(255,255,255,0.05);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.6);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.6);
+  --radius: 10px;
+  font-family: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--color-bg-main);color:var(--color-text);min-height:100vh}
+
+.app{max-width:1120px;margin:28px auto;padding:18px}
+
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px; padding: 10px 0;}
+h1 { margin: 0; font-size: 1.8em; color: var(--color-primary); }
+h2 { margin: 0; font-size: 1.5em; }
+h3 { margin-top: 0; color: var(--color-primary); }
+
+
+.header-controls{display:flex;gap:10px;align-items:center}
+
+button{
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  cursor:pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1;
+}
+button:hover{
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+button.primary {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+button.primary:hover {
+  background: #9928b0;
+  border-color: #9928b0;
+  box-shadow: var(--shadow-sm);
+}
+
+.points-display{
+    font-weight:600;
+    background: var(--color-bg-card);
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Layout for Sidebar and Views */
+.main-layout {
+  display: flex;
+  gap: 24px;
+}
+#sidebar {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: var(--color-bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
+#sidebar .nav-button {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  border: none;
+  background: transparent;
+  padding: 10px 14px;
+  font-size: 1.05em;
+}
+#sidebar .nav-button:hover {
+  background: var(--color-bg-main);
+  box-shadow: none;
+}
+#sidebar .nav-button.active {
+  background: var(--color-primary);
+  color: white;
+  font-weight: 700;
+}
+#sidebar .nav-button.active:hover {
+  opacity: 0.9;
+  background: var(--color-primary);
+}
+
+#content-views {
+  flex: 1;
+  min-height: 500px;
+}
+.view {
+  min-width: 100%;
+}
+.hidden-view {
+  display: none;
+}
+/* End Layout for Sidebar and Views */
+
+.columns{display:flex;gap:24px}
+.column{
+  flex:1;
+  background:var(--color-bg-card);
+  border:1px solid var(--color-border);
+  padding:16px;
+  border-radius:var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border);}
+.vault-stats {
+    padding: 8px 0 16px;
+    color: var(--color-muted);
+}
+
+
+.task-list{list-style:none;padding:0;margin:0;min-height:120px}
+.task-item{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:space-between;
+  padding:12px 15px;
+  border-radius:var(--radius);
+  border:1px solid var(--color-border);
+  background:var(--color-bg-item);
+  margin-bottom:10px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s ease;
+}
+.task-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+.task-item[draggable="true"] {
+    cursor: grab;
+}
+
+
+.task-meta{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  width:100%;
+}
+.emoji{
+  font-size:1.4em;
+  line-height:1;
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  border-radius:8px;
+  background: rgba(255,255,255,0.02);
+  margin-top:2px;
+}
+.task-title{font-weight:600; font-size: 1.1em; margin: 0;}
+.small{font-size:13px;color:var(--color-muted)}
+.controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-top:10px;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
+.controls .small{ margin-right:auto; color:var(--color-muted); font-weight:600; }
+.controls button {
+    padding:6px 10px;
+    font-size:0.95em;
+    border-radius:8px;
+    min-width:36px;
+}
+.controls button.complete {
+    background: var(--color-success);
+    color: white;
+    border-color: var(--color-success);
+}
+.controls button.complete:hover {
+    background: #27ae60;
+    border-color: #27ae60;
+}
+.controls button.delete {
+    color: var(--color-danger);
+    border-color: var(--color-border);
+}
+
+.hidden{display:none}
+
+/* Modals */
+.modal{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  background:var(--color-bg-card);
+  border: none;
+  padding:24px;
+  border-radius:var(--radius);
+  width:400px;
+  max-width: 90%;
+  z-index:60;
+  box-shadow: var(--shadow-md);
+}
+#modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:50}
+
+label{display:block;margin-bottom:12px;font-size:14px;font-weight: 500;}
+input,textarea,select{
+  width:100%;padding:10px;
+  border:1px solid var(--color-border);
+  border-radius:6px;
+  margin-top: 4px;
+  background: var(--color-bg-card);
+  color: var(--color-text);
+}
+input[type="radio"] {
+    width: auto;
+    margin-right: 8px;
+}
+input:focus, textarea:focus, select:focus {
+    border-color: var(--color-primary);
+    outline: 2px solid rgba(30, 144, 255, 0.2);
+}
+
+fieldset{border:1px dashed var(--color-border);padding:12px;border-radius:var(--radius);margin-bottom:12px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* Store/Inventory Lists */
+.store-list{list-style:none;padding:0;margin:0}
+.store-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 15px;
+  border:1px solid var(--color-border);
+  border-radius:var(--radius);
+  background:var(--color-bg-item);
+  margin-bottom:10px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s ease;
+}
+.store-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+img.thumb{width:60px;height:60px;object-fit:cover;border-radius:var(--radius);margin-right:12px; border: 1px solid var(--color-border);}
+
+.store-item > div:first-child { /* Targets the wrapper for store item meta content */
+  display: flex;
+  align-items: center;
+}
+.store-item .controls .buy {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+.store-item .controls .buy:hover {
+    background: #1aa098;
+    border-color: #1aa098;
+}
+
+/* Adjust store section layout */
+#view-store h3 {
+    font-size: 1.3em;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    color: var(--color-text);
+}
+
+/* Specific styling for larger modals (Vault/Inventory) */
+#vault-modal, #inventory-modal {
+    width: 600px;
+}
+/* Adjust modal content headers (Vault/Inventory lists) */
+#vault-modal h3, #inventory-modal h3 {
+    font-size: 1.3em; 
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    color: var(--color-text);
+}
+
+/* Style column panel headers inside task view */
+.column .panel-header h3 {
+    margin: 0;
+    font-size: 1.3em;
+    color: var(--color-text);
+}
+
+.triggers-list{list-style:none;padding:0;margin:0}
+.trigger-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 12px;
+  border-radius:8px;
+  background:var(--color-bg-item);
+  border:1px solid var(--color-border);
+  margin-bottom:10px;
+  gap:12px;
+}
+/* Questions view: make question items vertical (question above, answer below) */
+#view-questions .trigger-item {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap:8px;
+  padding:14px;
+}
+/* New: explicit sections for question items */
+#view-questions .question-top { font-weight:700; padding:8px 10px; border-radius:8px; background:rgba(141,0,71,0.03); color:var(--color-primary); }
+#view-questions .question-mid { font-weight:400; padding:8px 10px; border-radius:8px; background:rgba(255,255,255,0.02); color:var(--color-text); min-height:28px; }
+#view-questions .question-bot { display:flex; gap:8px; justify-content:flex-end; align-items:center; margin-top:4px; }
+/* ensure controls in questions use compact button styles */
+#view-questions .question-bot .controls button { padding:6px 10px; }
+
+.trigger-phrase{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  white-space:nowrap; /* force single-line phrase */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto; /* take available horizontal space */
+  min-width: 0; /* allow flex shrinking with ellipsis */
+}
+.trigger-phrase .part{padding:6px 10px;border-radius:8px;font-weight:600}
+.trigger-phrase .when{background:rgba(141,0,71,0.07);color:var(--color-primary)}
+.trigger-phrase .then{background:rgba(83,192,255,0.07);color:var(--color-accent)}
+.trigger-phrase .connector{color:var(--color-muted);font-weight:700;padding:0 6px;}

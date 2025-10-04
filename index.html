@@ -17,6 +17,7 @@
   <main class="app">
     <header>
       <h1>🥷Cazatareas</h1>
+      <button id="sidebar-toggle" class="nav-toggle" aria-label="Abrir menú">☰</button>
       <div class="header-controls">
         <div class="points-display">Puntos: <span id="points">0</span></div>
       </div>
@@ -24,13 +25,14 @@
 
     <div class="main-layout">
       <nav id="sidebar">
-        <button data-view="tasks" class="nav-button active">📋Tareas</button>
-        <button data-view="triggers" class="nav-button">⚡Gatillos</button>
-        <button data-view="wishes" class="nav-button">🌠Deseos</button>
-        <button data-view="questions" class="nav-button">❓Preguntas</button>
-        <button data-view="rules" class="nav-button">📜Reglas</button>
-        <button data-view="store" class="nav-button">🛒Tienda</button>
-        <button data-view="settings" class="nav-button">⚙️Ajustes</button>
+        <button data-view="tasks" class="nav-button active"><span class="nav-icon">📋</span><span class="nav-text">Tareas</span></button>
+        <button data-view="store" class="nav-button"><span class="nav-icon">🛒</span><span class="nav-text">Tienda</span></button>
+        <button data-view="events" class="nav-button"><span class="nav-icon">🗓️</span><span class="nav-text">Eventos</span></button>
+        <button data-view="triggers" class="nav-button"><span class="nav-icon">⚡</span><span class="nav-text">Gatillos</span></button>
+        <button data-view="wishes" class="nav-button"><span class="nav-icon">🌠</span><span class="nav-text">Deseos</span></button>
+        <button data-view="questions" class="nav-button"><span class="nav-icon">❓</span><span class="nav-text">Preguntas</span></button>
+        <button data-view="rules" class="nav-button"><span class="nav-icon">📜</span><span class="nav-text">Reglas</span></button>
+        <button data-view="settings" class="nav-button"><span class="nav-icon">⚙️</span><span class="nav-text">Ajustes</span></button>
       </nav>
 
       <div id="content-views">
@@ -70,7 +72,7 @@
               <button id="create-trigger-btn" class="primary">➕ Crear Gatillo</button>
             </div>
           </div>
-          <div class="column" style="padding:16px;background:transparent;border:none;">
+          <div class="view-content-area">
             <p class="small" style="color:var(--color-muted)">Un gatillo es una situación que te recuerda hacer algo. Revisa tus gatillos de forma frecuente para adquirir hábitos.</p>
             <ul id="triggers-list" class="triggers-list" style="margin-top:12px"></ul>
           </div>
@@ -82,7 +84,7 @@
               <button id="create-wish-btn" class="primary">➕ Crear Deseo</button>
             </div>
           </div>
-          <div class="column" style="padding:16px;background:transparent;border:none;">
+          <div class="view-content-area">
             <p class="small" style="color:var(--color-muted)">Un deseo es algo que quieres lograr o conseguir; guárdalo aquí para recordarlo.</p>
             <ul id="wishes-list" class="triggers-list" style="margin-top:12px"></ul>
           </div>
@@ -94,7 +96,7 @@
               <button id="create-question-btn" class="primary">➕ Crear Pregunta</button>
             </div>
           </div>
-          <div class="column" style="padding:16px;background:transparent;border:none;">
+          <div class="view-content-area">
             <p class="small" style="color:var(--color-muted)">Una pregunta te ayuda a reflexionar o decidir; guarda la pregunta y, si quieres, su respuesta aquí.</p>
             <ul id="questions-list" class="triggers-list" style="margin-top:12px"></ul>
           </div>
@@ -106,7 +108,7 @@
               <button id="create-rule-btn" class="primary">➕ Crear Regla</button>
             </div>
           </div>
-          <div class="column" style="padding:16px;background:transparent;border:none;">
+          <div class="view-content-area">
             <p class="small" style="color:var(--color-muted)">Una regla es una instrucción simple que te ayuda a automatizar decisiones o comportamientos. Úsalas para recordar principios o criterios que faciliten elegir acciones consistentes.</p>
             <ul id="rules-list" class="triggers-list" style="margin-top:12px"></ul>
           </div>
@@ -126,12 +128,26 @@
           
         </section>
 
+        <!-- 4. Events View -->
+        <section id="view-events" class="view hidden-view">
+          <div class="panel-header">
+            <h2>🗓️Eventos</h2>
+            <div class="store-controls">
+              <button id="create-event-btn" class="primary">➕ Crear Evento</button>
+            </div>
+          </div>
+          <div class="view-content-area">
+            <p class="small" style="color:var(--color-muted)">Registra eventos o notas con una fecha opcional (puede ser incompleta, p. ej. "Jun 2025" o "2025-06-12"). Se muestra el texto tal como lo escribiste y la fecha si la provees.</p>
+            <ul id="events-list" class="triggers-list" style="margin-top:12px"></ul>
+          </div>
+        </section>
+
         <!-- 4. Settings View (empty for now) -->
         <section id="view-settings" class="view hidden-view">
           <div class="panel-header">
             <h2>⚙️Ajustes</h2>
           </div>
-          <div class="column" style="padding:16px;background:transparent;border:none;">
+          <div class="view-content-area">
             <!-- Vista de ajustes vacía por ahora -->
             <p class="small" style="color:var(--color-muted)">Aquí podrás configurar opciones más adelante.</p>
 
@@ -306,6 +322,25 @@
         <div class="modal-actions">
           <button type="submit" class="primary">Guardar</button>
           <button type="button" id="cancel-rule">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Event Modal -->
+    <div id="event-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <h3 id="event-modal-title">Crear Evento</h3>
+      <form id="event-form">
+        <label>Texto
+          <input name="text" required maxlength="200" placeholder="Describe el acontecimiento..." />
+        </label>
+        <label>Fecha (opcional)
+          <input name="date" placeholder="Fecha libre (p.ej. 2025-06-12 o Jun 2025 o 2025)" />
+          <div class="small" style="margin-top:6px;color:var(--color-muted)">La fecha es opcional y puede ser parcial; se mostrará tal cual la escribes.</div>
+        </label>
+        <div class="modal-actions">
+          <button type="submit" class="primary">Guardar</button>
+          <button type="button" id="cancel-event">Cancelar</button>
+          <button type="button" id="delete-event" class="delete hidden">Eliminar</button>
         </div>
       </form>
     </div>

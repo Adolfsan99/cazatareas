@@ -77,6 +77,10 @@ button.primary:hover {
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
   flex-shrink: 0;
+  transition: width 260ms cubic-bezier(.2,.9,.2,1), transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 200ms;
+  /* default: visible on wide screens; on small screens will be moved off-canvas */
+  transform: translateX(0);
+  position: relative;
 }
 #sidebar .nav-button {
   width: 100%;
@@ -86,6 +90,9 @@ button.primary:hover {
   background: transparent;
   padding: 10px 14px;
   font-size: 1.05em;
+  display: flex; /* Make button content align */
+  align-items: center;
+  gap: 12px;
 }
 #sidebar .nav-button:hover {
   background: var(--color-bg-main);
@@ -99,6 +106,176 @@ button.primary:hover {
 #sidebar .nav-button.active:hover {
   opacity: 0.9;
   background: var(--color-primary);
+}
+
+.nav-icon {
+    font-size: 1.2em;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.nav-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* toggle button in header */
+.nav-toggle {
+  display:none;
+  border:none;
+  background: transparent;
+  font-size:1.15em;
+  margin-right:8px;
+  padding:6px 8px;
+}
+
+/* small-screen: collapse sidebar by default, make it fixed overlay when opened */
+@media (max-width: 799px) {
+  .main-layout { gap: 12px; }
+  #sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 80;
+    transform: translateX(-110%);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    width: 76%;
+    max-width: 320px;
+    padding-top: 28px;
+  }
+  /* show toggle button on mobile */
+  .nav-toggle { display:inline-flex; align-items:center; justify-content:center; color:var(--color-text); }
+  /* show content area full width when sidebar hidden */
+  #content-views { margin-left: 0; }
+  /* backdrop for nav when open */
+  #nav-backdrop { position:fixed; inset:0; background: rgba(0,0,0,0.45); z-index:70; display:none; }
+  body.sidebar-open #sidebar { transform: translateX(0); }
+  body.sidebar-open #nav-backdrop { display:block; }
+}
+
+/* ensure content adjusts when sidebar is fixed (mobile open) */
+@media (max-width: 799px) {
+  .app { padding-left: 12px; padding-right: 12px; margin-top: 16px; margin-bottom: 16px; } /* Improved mobile padding */
+  .main-layout { margin-top: 12px; }
+  
+  /* Applying new general mobile styles */
+  .app { margin: 10px auto; padding: 10px; } 
+
+  header {
+    margin-bottom: 16px;
+    padding: 5px 0;
+  }
+  h1 { font-size: 1.5em; }
+  .points-display { 
+    padding: 6px 10px; 
+    font-size: 0.9em; 
+    flex-shrink: 0;
+  }
+
+  .modal {
+    width: 95%; 
+    padding: 18px; 
+  }
+
+  .task-item {
+    padding: 10px 12px;
+  }
+  .task-meta {
+    align-items: center;
+  }
+  .controls {
+    margin-top: 8px;
+  }
+  .controls button {
+    padding: 5px 8px;
+    font-size: 0.85em;
+  }
+}
+
+/* New media query for stacking columns and smaller device adjustments */
+@media (max-width: 600px) {
+  .columns {
+    flex-direction: column;
+    gap: 16px;
+  }
+  /* Smaller padding inside columns/content areas on small phones */
+  .column, .view-content-area {
+      padding: 12px;
+  }
+  /* Further refining task layout for ultra narrow screens */
+  .task-meta {
+      align-items: flex-start;
+  }
+  .emoji {
+      width: 36px;
+      height: 36px;
+      font-size: 1.2em;
+      margin-top: 0;
+  }
+  .task-title {
+      font-size: 1em;
+  }
+  .task-meta > div:nth-child(2) {
+      margin-top: -2px; /* visual alignment tweak */
+  }
+
+  /* Adjustments for Question list items */
+  #view-questions .q-top {
+      padding: 10px 12px;
+      flex-direction: column; /* Stack title and controls */
+      align-items: flex-start;
+  }
+  #view-questions .q-title {
+      margin-right: 0;
+      margin-bottom: 8px;
+      width: 100%;
+  }
+  #view-questions .q-controls {
+      width: 100%;
+      justify-content: flex-end;
+  }
+  #view-questions .q-bottom {
+      padding: 8px 12px;
+      min-height: auto;
+  }
+
+  /* Trigger/Wish/Rule items */
+  .trigger-item {
+      flex-wrap: wrap;
+      padding: 10px 12px;
+      align-items: flex-start;
+  }
+  .trigger-phrase {
+      flex: 1 1 100%;
+      margin-bottom: 4px;
+  }
+  .trigger-item .controls {
+      margin-top: 0;
+  }
+}
+
+/* desktop: make sidebar slightly overlapping and allow slide-in/out visual feedback */
+@media (min-width: 800px) {
+  /* body.sidebar-hidden #sidebar { transform: translateX(-220px); box-shadow:none; } */ /* Removed previous unused class */
+  .nav-toggle { display:inline-flex; align-items:center; justify-content:center; color:var(--color-text); margin-left:12px; }
+  
+  /* Collapsed State */
+  body.sidebar-collapsed #sidebar {
+    width: 60px; /* Compact width */
+    padding: 16px 8px; /* Adjust padding for icon-only display */
+  }
+
+  body.sidebar-collapsed #sidebar .nav-button {
+    justify-content: center;
+    padding: 10px 0; /* center content */
+    gap: 0;
+  }
+  
+  body.sidebar-collapsed #sidebar .nav-text {
+    display: none; /* Hide text */
+  }
 }
 
 #content-views {
@@ -121,6 +298,10 @@ button.primary:hover {
   padding:16px;
   border-radius:var(--radius);
   box-shadow: var(--shadow-sm);
+}
+
+.view-content-area {
+    padding: 16px; /* consistent padding for content areas outside multi-column layouts */
 }
 
 .panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border);}
@@ -158,6 +339,10 @@ button.primary:hover {
   gap:12px;
   align-items:flex-start;
   width:100%;
+}
+.task-meta > div:nth-child(2) { /* Content container for title/desc */
+    flex-grow: 1;
+    min-width: 0; /* Ensures content wraps correctly */
 }
 .emoji{
   font-size:1.4em;
@@ -314,32 +499,66 @@ img.thumb{width:60px;height:60px;object-fit:cover;border-radius:var(--radius);ma
   margin-bottom:10px;
   gap:12px;
 }
-/* Questions view: make question items vertical (question above, answer below) */
+/* New layout: top row has title left, buttons right; bottom row is the answer */
 #view-questions .trigger-item {
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  gap:8px;
-  padding:14px;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  padding:0;
+  gap:0;
+  overflow:hidden;
+  border-radius:8px;
+  border:1px solid var(--color-border);
+  background:var(--color-bg-item);
+  margin-bottom:10px;
 }
-/* New: explicit sections for question items */
-#view-questions .question-top { font-weight:700; padding:8px 10px; border-radius:8px; background:rgba(141,0,71,0.03); color:var(--color-primary); }
-#view-questions .question-mid { font-weight:400; padding:8px 10px; border-radius:8px; background:rgba(255,255,255,0.02); color:var(--color-text); min-height:28px; }
-#view-questions .question-bot { display:flex; gap:8px; justify-content:flex-end; align-items:center; margin-top:4px; }
-/* ensure controls in questions use compact button styles */
-#view-questions .question-bot .controls button { padding:6px 10px; }
+
+#view-questions .q-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 14px;
+  gap:12px;
+  border-bottom:1px solid rgba(255,255,255,0.02);
+  background:transparent;
+}
+#view-questions .q-title {
+  font-weight:700;
+  color:var(--color-text);
+  text-align:left;
+  white-space:pre-wrap;
+  word-break:break-word;
+  flex:1 1 auto;
+  margin-right:12px;
+}
+#view-questions .q-controls { display:flex; gap:8px; align-items:center; flex-shrink:0; }
+#view-questions .q-controls button { padding:6px 10px; min-width:36px; }
+
+#view-questions .q-bottom {
+  padding:10px 14px;
+  color:var(--color-muted);
+  text-align:left;
+  min-height:40px;
+  background: rgba(255,255,255,0.01);
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+/* Remove previous specific question blocks to avoid conflicts */
+#view-questions .question-top, #view-questions .question-mid, #view-questions .question-bot { display:none; }
 
 .trigger-phrase{
   display:flex;
   gap:8px;
   align-items:center;
-  white-space:nowrap; /* force single-line phrase */
+  flex-wrap: wrap; /* Allow parts to wrap for responsiveness */
   overflow: hidden;
   text-overflow: ellipsis;
   flex: 1 1 auto; /* take available horizontal space */
   min-width: 0; /* allow flex shrinking with ellipsis */
 }
-.trigger-phrase .part{padding:6px 10px;border-radius:8px;font-weight:600}
-.trigger-phrase .when{background:rgba(141,0,71,0.07);color:var(--color-primary)}
-.trigger-phrase .then{background:rgba(83,192,255,0.07);color:var(--color-accent)}
+.trigger-phrase .part{padding:6px 10px;border-radius:8px;font-weight:600; flex-shrink: 0;}
+.trigger-phrase .when{background:rgba(255,255,255,0.02);color:var(--color-text)}
+.trigger-phrase .then{background:rgba(255,255,255,0.02);color:var(--color-text)}
 .trigger-phrase .connector{color:var(--color-muted);font-weight:700;padding:0 6px;}

@@ -9,6 +9,8 @@ export function initApp(initialState){
   state = initialState;
   state.questions = state.questions || [];
   state.rules = state.rules || [];
+  state.wishes = state.wishes || [];
+  state.events = state.events || []; // ensure events array exists
   // removed automatic seeding of sample data so user data is never overwritten or replaced
 
   renderAll();
@@ -22,6 +24,7 @@ function renderAll(){
   renderLists();
   renderTriggers();
   renderWishes();
+  renderEvents();
   renderQuestions();
   renderRules();
   updateInventoryButtonCount();
@@ -94,6 +97,13 @@ function renderTriggers(){
     li.querySelector('.delete-trigger').addEventListener('click',()=>{ if(confirm('Eliminar gatillo?')) { state.triggers = state.triggers.filter(t=>t.id!==tr.id); renderAll(); }});
     ul.appendChild(li);
   });
+  // enable drag/drop and recreate sortable after render
+  if(ul.__sortable && typeof ul.__sortable.destroy === 'function') ul.__sortable.destroy();
+  ul.__sortable = Sortable.create(ul, {animation:120, onEnd:()=>{
+    const ids = Array.from(ul.children).map(li=>li.dataset.id);
+    state.triggers = ids.map(id=>state.triggers.find(t=>t.id===id));
+    DB.save(state);
+  }});
 }
 
 /* Wishes (single-field CRUD) */
@@ -111,6 +121,35 @@ function renderWishes(){
     li.querySelector('.delete-wish').addEventListener('click',()=>{ if(confirm('Eliminar deseo?')) { state.wishes = state.wishes.filter(x=>x.id!==w.id); renderAll(); }});
     ul.appendChild(li);
   });
+  // enable drag/drop and recreate sortable after render
+  if(ul.__sortable && typeof ul.__sortable.destroy === 'function') ul.__sortable.destroy();
+  ul.__sortable = Sortable.create(ul, {animation:120, onEnd:()=>{
+    const ids = Array.from(ul.children).map(li=>li.dataset.id);
+    state.wishes = ids.map(id=>state.wishes.find(w=>w.id===id));
+    DB.save(state);
+  }});
+}
+
+/* New: Events (acontecimientos) */
+function renderEvents(){
+  const ul = q('#events-list'); if(!ul) return;
+  ul.innerHTML = '';
+  (state.events||[]).forEach(ev=>{
+    const li = document.createElement('li');
+    li.className = 'trigger-item';
+    li.dataset.id = ev.id;
+    li.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;min-width:0"><div class="task-title">${escapeHtml(ev.text)}</div><div class="small">${ev.date? escapeHtml(ev.date) : ''}</div></div>
+      <div class="controls"><button class="edit-event">✎</button><button class="delete-event">🗑️</button></div>`;
+    li.querySelector('.edit-event').addEventListener('click',()=>openEventModal(ev));
+    li.querySelector('.delete-event').addEventListener('click',()=>{ if(confirm('Eliminar evento?')) { state.events = state.events.filter(x=>x.id!==ev.id); renderAll(); }});
+    ul.appendChild(li);
+  });
+  if(ul.__sortable && typeof ul.__sortable.destroy === 'function') ul.__sortable.destroy();
+  ul.__sortable = Sortable.create(ul, {animation:120, onEnd:()=>{
+    const ids = Array.from(ul.children).map(li=>li.dataset.id);
+    state.events = ids.map(id=>state.events.find(e=>e.id===id));
+    DB.save(state);
+  }});
 }
 
 /* Questions (question + optional answer CRUD) */
@@ -122,14 +161,23 @@ function renderQuestions(){
     li.className = 'trigger-item';
     li.dataset.id = item.id;
     li.innerHTML = `
-      <div class="question-top">${escapeHtml(item.qtext)}</div>
-      <div class="question-mid">${item.answer ? escapeHtml(item.answer) : ''}</div>
-      <div class="question-bot"><div class="controls" style="margin:0"><button class="edit-q">✎</button><button class="delete-q">🗑️</button></div></div>
+      <div class="q-top">
+        <div class="q-title">${escapeHtml(item.qtext)}</div>
+        <div class="q-controls"><button class="edit-q">✎</button><button class="delete-q">🗑️</button></div>
+      </div>
+      <div class="q-bottom">${item.answer ? escapeHtml(item.answer) : ''}</div>
     `;
     li.querySelector('.edit-q').addEventListener('click',()=>openQuestionModal(item));
     li.querySelector('.delete-q').addEventListener('click',()=>{ if(confirm('Eliminar pregunta?')) { state.questions = state.questions.filter(q=>q.id!==item.id); renderAll(); }});
     ul.appendChild(li);
   });
+  // enable drag/drop and recreate sortable after render
+  if(ul.__sortable && typeof ul.__sortable.destroy === 'function') ul.__sortable.destroy();
+  ul.__sortable = Sortable.create(ul, {animation:120, onEnd:()=>{
+    const ids = Array.from(ul.children).map(li=>li.dataset.id);
+    state.questions = ids.map(id=>state.questions.find(qi=>qi.id===id));
+    DB.save(state);
+  }});
 }
 
 /* Rules (single-field CRUD) */
@@ -146,6 +194,13 @@ function renderRules(){
     li.querySelector('.delete-rule').addEventListener('click',()=>{ if(confirm('Eliminar regla?')) { state.rules = state.rules.filter(x=>x.id!==r.id); renderAll(); }});
     ul.appendChild(li);
   });
+  // enable drag/drop and recreate sortable after render
+  if(ul.__sortable && typeof ul.__sortable.destroy === 'function') ul.__sortable.destroy();
+  ul.__sortable = Sortable.create(ul, {animation:120, onEnd:()=>{
+    const ids = Array.from(ul.children).map(li=>li.dataset.id);
+    state.rules = ids.map(id=>state.rules.find(r=>r.id===id));
+    DB.save(state);
+  }});
 }
 
 /* Store & Inventory */
@@ -158,6 +213,7 @@ function renderStore(){
   state.store.forEach(i=>{
     const li = document.createElement('li');
     li.className='store-item';
+    li.dataset.id = i.id;
     li.innerHTML = `<div style="display:flex;align-items:center">
       ${i.img?`<img src="${escapeAttr(i.img)}" class="thumb" alt="">`:''}
       <div><div class="task-title">${escapeHtml(i.name)}</div><div class="small">${escapeHtml(i.desc)}</div></div>
@@ -171,11 +227,8 @@ function renderStore(){
     ul.appendChild(li);
   });
 
-  Sortable.create(ul, {animation:150, onEnd:e=>{
-    const ids = Array.from(ul.children).map(ch=> {
-      const name = ch.querySelector('.task-title').textContent;
-      return state.store.find(s=>s.name===name).id;
-    });
+  ul.__sortable = Sortable.create(ul, {animation:150, onEnd:e=>{
+    const ids = Array.from(ul.children).map(ch=> ch.dataset.id);
     state.store = ids.map(id=>state.store.find(s=>s.id===id));
     DB.save(state);
   }});
@@ -191,9 +244,12 @@ function renderInventoryCount(){
   const invModalEl = q('#inv-count-modal'); if(invModalEl) invModalEl.textContent = count;
   const inventoryList = q('#inventory-list'); if(!inventoryList) return;
   inventoryList.innerHTML = '';
+  if(inventoryList.__sortable && typeof inventoryList.__sortable.destroy === 'function') inventoryList.__sortable.destroy();
+
   state.inventory.forEach(it=>{
     const li = document.createElement('li');
     li.className='store-item';
+    li.dataset.id = it.invId;
     li.innerHTML = `<div style="display:flex;align-items:center">
       ${it.img?`<img src="${escapeAttr(it.img)}" class="thumb" alt="">`:''}
       <div><div class="task-title">${escapeHtml(it.name)}</div><div class="small">${escapeHtml(it.desc)}</div></div>
@@ -202,6 +258,13 @@ function renderInventoryCount(){
     li.querySelector('.use').addEventListener('click',()=>useInventory(it.invId));
     inventoryList.appendChild(li);
   });
+  
+  // Create new Sortable instance for Inventory List
+  inventoryList.__sortable = Sortable.create(inventoryList, {animation:120, onEnd:()=>{ 
+    const ids=Array.from(inventoryList.children).map(li=>li.dataset.id); 
+    state.inventory = ids.map(id=>state.inventory.find(i=>i.invId===id)); 
+    DB.save(state); 
+  }});
 }
 
 /* Actions (kept concise) */
@@ -298,9 +361,12 @@ function closeInventoryModal(){ q('#modal-backdrop').classList.add('hidden'); q(
 function renderVault(){
   const vaultList = q('#vault-list'); if (!vaultList) return;
   vaultList.innerHTML = '';
+  if(vaultList.__sortable && typeof vaultList.__sortable.destroy === 'function') vaultList.__sortable.destroy();
+
   state.vault.forEach(t=>{
     const li = document.createElement('li');
     li.className='task-item';
+    li.dataset.id = t.id;
     li.innerHTML = `<div class="task-meta"><div class="emoji">${t.emoji}</div><div><div class="task-title">${escapeHtml(t.title)}</div><div class="small">${t.points} pts • ${t.completedAt||''}</div></div></div>
     <div class="controls">
       <button class="unmark">Desmarcar</button>
@@ -310,6 +376,14 @@ function renderVault(){
     li.querySelector('.recycle').addEventListener('click',()=>unmarkFromVault(t.id,true));
     vaultList.appendChild(li);
   });
+  
+  // Create new Sortable instance for Vault List
+  vaultList.__sortable = Sortable.create(vaultList, {animation:120, onEnd:()=>{ 
+    const ids=Array.from(vaultList.children).map(li=>li.dataset.id); 
+    state.vault = ids.map(id=>state.vault.find(v=>v.id===id)); 
+    DB.save(state); 
+  }});
+  
   q('#vault-count').textContent = state.vault.length;
   q('#vault-level').textContent = calcLevel(state);
 }
@@ -366,11 +440,65 @@ function openRuleModal(rule=null){
 }
 function closeRuleModal(){ q('#modal-backdrop').classList.add('hidden'); q('#rule-modal').classList.add('hidden'); }
 
+/* Event modal handlers */
+function openEventModal(ev=null){
+  q('#modal-backdrop').classList.remove('hidden'); q('#event-modal').classList.remove('hidden');
+  q('#event-modal-title').textContent = ev? 'Editar Evento':'Crear Evento';
+  const form = q('#event-form');
+  form.elements.text.value = ev? ev.text : '';
+  form.elements.date.value = ev? ev.date || '' : '';
+  const deleteBtn = q('#delete-event');
+  if(ev){ deleteBtn.classList.remove('hidden'); deleteBtn.onclick = ()=>{ if(!confirm('Eliminar evento?')) return; state.events = state.events.filter(x=>x.id!==ev.id); closeEventModal(); renderAll(); }; }
+  else { deleteBtn.classList.add('hidden'); deleteBtn.onclick = null; }
+  form.onsubmit = (e)=>{ e.preventDefault(); const text = form.elements.text.value.trim(); const date = form.elements.date.value.trim() || null; if(!text) return alert('Describe el acontecimiento'); if(ev){ ev.text = text; ev.date = date; } else { state.events = state.events || []; state.events.unshift({ id: uid(), text, date }); } closeEventModal(); renderAll(); };
+  q('#cancel-event').onclick = closeEventModal;
+}
+function closeEventModal(){ q('#modal-backdrop').classList.add('hidden'); q('#event-modal').classList.add('hidden'); }
+
 /* UI wiring */
 function setupUI(){
   q('#new-task-btn').addEventListener('click', ()=>openTaskModal());
   q('#open-vault-modal-btn').addEventListener('click', openVaultModal);
   q('#close-vault').addEventListener('click', closeVaultModal);
+  
+  // sidebar toggle handling (mobile and desktop slide/collapse)
+  const toggle = q('#sidebar-toggle');
+  const navBackdrop = document.createElement('div');
+  navBackdrop.id = 'nav-backdrop';
+  document.body.appendChild(navBackdrop);
+
+  const isMobile = () => window.innerWidth < 800;
+
+  toggle?.addEventListener('click', ()=> { 
+    if (isMobile()) {
+      // Mobile: Open/close off-canvas menu
+      document.body.classList.toggle('sidebar-open');
+    } else {
+      // Desktop: Collapse/expand menu
+      document.body.classList.toggle('sidebar-collapsed');
+    }
+  });
+  
+  navBackdrop.addEventListener('click', ()=> { 
+    if (isMobile()) {
+        document.body.classList.remove('sidebar-open');
+    }
+  });
+
+  // Handle resize event to ensure correct state presentation on breakpoints transition
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 800) {
+      document.body.classList.remove('sidebar-open'); // Ensure mobile class is gone on desktop
+    } else {
+      document.body.classList.remove('sidebar-collapsed'); // Ensure desktop collapse class is gone on mobile
+    }
+  });
+
+  // close sidebar on nav click (helpful for mobile)
+  qs('#sidebar .nav-button').forEach(btn => btn.addEventListener('click', ()=> { 
+    if(isMobile()) document.body.classList.remove('sidebar-open'); 
+  }));
+  
   q('#open-inventory-modal-btn').addEventListener('click', openInventoryModal);
   q('#close-inventory').addEventListener('click', closeInventoryModal);
   // Partida: export/import game state
@@ -382,16 +510,11 @@ function setupUI(){
   qs('input[name="pointsMode"]').forEach(r=> r.addEventListener('change', e=>{ if(e.target.value==='effort'){ q('#effort-options').classList.remove('hidden'); q('#manual-option').classList.add('hidden'); } else { q('#effort-options').classList.add('hidden'); q('#manual-option').classList.remove('hidden'); } }));
   Sortable.create(q('#active-list'), {animation:150, onEnd:saveTaskOrder});
   Sortable.create(q('#archived-list'), {animation:150, onEnd:saveTaskOrder});
-  // enable ordering for simple lists
-  if(q('#triggers-list')) Sortable.create(q('#triggers-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#triggers-list').children).map(li=>li.dataset.id); state.triggers = ids.map(id=>state.triggers.find(t=>t.id===id)); DB.save(state); }});
-  if(q('#wishes-list')) Sortable.create(q('#wishes-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#wishes-list').children).map(li=>li.dataset.id); state.wishes = ids.map(id=>state.wishes.find(w=>w.id===id)); DB.save(state); }});
-  if(q('#questions-list')) Sortable.create(q('#questions-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#questions-list').children).map(li=>li.dataset.id); state.questions = ids.map(id=>state.questions.find(qi=>qi.id===id)); DB.save(state); }});
-  if(q('#rules-list')) Sortable.create(q('#rules-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#rules-list').children).map(li=>li.dataset.id); state.rules = ids.map(id=>state.rules.find(r=>r.id===id)); DB.save(state); }});
+  
   qs('#sidebar .nav-button').forEach(btn => btn.addEventListener('click', (e) => { const viewId = e.currentTarget.dataset.view; switchView(viewId); }));
   const createTriggerBtn = q('#create-trigger-btn'); if(createTriggerBtn) createTriggerBtn.addEventListener('click', ()=> openTriggerModal());
-  // enable ordering for vault and inventory modals (if present)
-  if(q('#vault-list')) Sortable.create(q('#vault-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#vault-list').children).map(li=>li.dataset.id); state.vault = ids.map(id=>state.vault.find(v=>v.id===id)); DB.save(state); }});
-  if(q('#inventory-list')) Sortable.create(q('#inventory-list'), {animation:120, onEnd:()=>{ const ids=Array.from(q('#inventory-list').children).map(li=>li.dataset.id); state.inventory = ids.map(id=>state.inventory.find(i=>i.invId===id)); DB.save(state); }});
+  const createEventBtn = q('#create-event-btn'); if(createEventBtn) createEventBtn.addEventListener('click', ()=> openEventModal());
+  
   q('#create-item-btn')?.addEventListener('click',()=>openItemModal());
   q('#create-wish-btn')?.addEventListener('click', ()=> openWishModal());
   q('#create-question-btn')?.addEventListener('click', ()=> openQuestionModal());

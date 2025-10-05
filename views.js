@@ -91,6 +91,7 @@ function renderTriggers(){
     const li = document.createElement('li');
     li.className = 'trigger-item';
     li.dataset.id = tr.id;
+    // keep markup but let CSS handle proportions and wrapping
     li.innerHTML = `<div class="trigger-phrase"><span class="part when">${escapeHtml(tr.when)}</span><span class="connector"> entonces </span><span class="part then">${escapeHtml(tr.then)}</span></div>
       <div class="controls"><button class="edit-trigger">✎</button><button class="delete-trigger">🗑️</button></div>`;
     li.querySelector('.edit-trigger').addEventListener('click',()=>openTriggerModal(tr));
@@ -539,6 +540,8 @@ function switchView(viewId) {
   qs('#sidebar .nav-button').forEach(btn => btn.classList.remove('active'));
   q(`#sidebar button[data-view="${viewId}"]`).classList.add('active');
   currentView = viewId;
+  // show points only on store view
+  document.body.classList.toggle('show-points', viewId === 'store');
   if (viewId === 'store') renderStore();
 }
 

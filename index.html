@@ -16,10 +16,8 @@
 <body>
   <main class="app">
     <header>
-      <h1>🥷Cazatareas</h1>
       <button id="sidebar-toggle" class="nav-toggle" aria-label="Abrir menú">☰</button>
       <div class="header-controls">
-        <div class="points-display">Puntos: <span id="points">0</span></div>
       </div>
     </header>
 
@@ -29,9 +27,9 @@
         <button data-view="store" class="nav-button"><span class="nav-icon">🛒</span><span class="nav-text">Tienda</span></button>
         <button data-view="events" class="nav-button"><span class="nav-icon">🗓️</span><span class="nav-text">Eventos</span></button>
         <button data-view="triggers" class="nav-button"><span class="nav-icon">⚡</span><span class="nav-text">Gatillos</span></button>
-        <button data-view="wishes" class="nav-button"><span class="nav-icon">🌠</span><span class="nav-text">Deseos</span></button>
+        <button data-view="wishes" class="nav-button"><span class="nav-icon">🌠</span><span class="nav-text">Peticiones</span></button>
         <button data-view="questions" class="nav-button"><span class="nav-icon">❓</span><span class="nav-text">Preguntas</span></button>
-        <button data-view="rules" class="nav-button"><span class="nav-icon">📜</span><span class="nav-text">Reglas</span></button>
+        <button data-view="rules" class="nav-button"><span class="nav-icon">📜</span><span class="nav-text">Leyes</span></button>
         <button data-view="settings" class="nav-button"><span class="nav-icon">⚙️</span><span class="nav-text">Ajustes</span></button>
       </nav>
 
@@ -73,19 +71,19 @@
             </div>
           </div>
           <div class="view-content-area">
-            <p class="small" style="color:var(--color-muted)">Un gatillo es una situación que te recuerda hacer algo. Revisa tus gatillos de forma frecuente para adquirir hábitos.</p>
+            <p class="small" style="color:var(--color-muted)">Lista de gatillos guardados.</p>
             <ul id="triggers-list" class="triggers-list" style="margin-top:12px"></ul>
           </div>
         </section>
 
         <section id="view-wishes" class="view hidden-view">
-          <div class="panel-header"><h2>🌠Deseos</h2>
+          <div class="panel-header"><h2>🌠Peticiones</h2>
             <div class="store-controls">
-              <button id="create-wish-btn" class="primary">➕ Crear Deseo</button>
+              <button id="create-wish-btn" class="primary">➕ Crear Petición</button>
             </div>
           </div>
           <div class="view-content-area">
-            <p class="small" style="color:var(--color-muted)">Un deseo es algo que quieres lograr o conseguir; guárdalo aquí para recordarlo.</p>
+            <p class="small" style="color:var(--color-muted)">Lista de peticiones y objetivos guardados.</p>
             <ul id="wishes-list" class="triggers-list" style="margin-top:12px"></ul>
           </div>
         </section>
@@ -97,19 +95,19 @@
             </div>
           </div>
           <div class="view-content-area">
-            <p class="small" style="color:var(--color-muted)">Una pregunta te ayuda a reflexionar o decidir; guarda la pregunta y, si quieres, su respuesta aquí.</p>
+            <p class="small" style="color:var(--color-muted)">Colección de preguntas y sus respuestas.</p>
             <ul id="questions-list" class="triggers-list" style="margin-top:12px"></ul>
           </div>
         </section>
 
         <section id="view-rules" class="view hidden-view">
-          <div class="panel-header"><h2>📜Reglas</h2>
+          <div class="panel-header"><h2>📜Leyes</h2>
             <div class="store-controls">
-              <button id="create-rule-btn" class="primary">➕ Crear Regla</button>
+              <button id="create-rule-btn" class="primary">➕ Crear Ley</button>
             </div>
           </div>
           <div class="view-content-area">
-            <p class="small" style="color:var(--color-muted)">Una regla es una instrucción simple que te ayuda a automatizar decisiones o comportamientos. Úsalas para recordar principios o criterios que faciliten elegir acciones consistentes.</p>
+            <p class="small" style="color:var(--color-muted)">Lista de leyes y reglas personales.</p>
             <ul id="rules-list" class="triggers-list" style="margin-top:12px"></ul>
           </div>
         </section>
@@ -118,9 +116,12 @@
         <section id="view-store" class="view hidden-view">
           <div class="panel-header">
             <h2>🛒Tienda</h2>
-            <div class="store-controls">
-              <button id="open-inventory-modal-btn">🎁 Recompensas (<span id="inv-count-button">0</span>)</button>
-              <button id="create-item-btn" class="primary">➕ Crear Objeto</button>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="points-display">Puntos:&nbsp;<span id="points">0</span></div>
+              <div class="store-controls">
+                <button id="open-inventory-modal-btn">🎁 Recompensas (<span id="inv-count-button">0</span>)</button>
+                <button id="create-item-btn" class="primary">➕ Crear Objeto</button>
+              </div>
             </div>
           </div>
           <ul id="store-list" class="store-list"></ul>
@@ -137,7 +138,7 @@
             </div>
           </div>
           <div class="view-content-area">
-            <p class="small" style="color:var(--color-muted)">Registra eventos o notas con una fecha opcional (puede ser incompleta, p. ej. "Jun 2025" o "2025-06-12"). Se muestra el texto tal como lo escribiste y la fecha si la provees.</p>
+            <p class="small" style="color:var(--color-muted)">Registro cronológico de eventos y hitos.</p>
             <ul id="events-list" class="triggers-list" style="margin-top:12px"></ul>
           </div>
         </section>
@@ -283,9 +284,9 @@
 
     <!-- Wish Modal -->
     <div id="wish-modal" class="modal hidden" role="dialog" aria-modal="true">
-      <h3 id="wish-modal-title">Crear Deseo</h3>
+      <h3 id="wish-modal-title">Crear Petición</h3>
       <form id="wish-form">
-        <label>Deseo
+        <label>Petición
           <input name="wish" required maxlength="140" placeholder="Escribe tu deseo..." />
         </label>
         <div class="modal-actions">
@@ -314,9 +315,9 @@
 
     <!-- Rule Modal -->
     <div id="rule-modal" class="modal hidden" role="dialog" aria-modal="true">
-      <h3 id="rule-modal-title">Crear Regla</h3>
+      <h3 id="rule-modal-title">Crear Ley</h3>
       <form id="rule-form">
-        <label>Regla
+        <label>Ley
           <input name="ruleText" required maxlength="140" placeholder="Escribe tu regla..." />
         </label>
         <div class="modal-actions">

@@ -2,6 +2,8 @@
 import Sortable from "sortablejs";
 import { q, qs, DB, uid, escapeHtml, escapeAttr, calcLevel } from './utils.js';
 
+const coinSound = new Audio('coin.mp3'); coinSound.preload = 'auto'; coinSound.volume = 0.7;
+
 let state;
 let currentView = 'tasks';
 
@@ -398,7 +400,9 @@ function unmarkFromVault(id, recycle){
 }
 
 /* Store actions */
-function buyItem(id){ const it = state.store.find(s=>s.id===id); if(!it) return; if(state.points < it.cost){ alert('No tienes suficientes puntos'); return;} state.points -= it.cost; state.inventory.push(Object.assign({},it,{invId:uid()})); renderAll(); if(currentView === 'store') renderStore(); }
+function buyItem(id){ const it = state.store.find(s=>s.id===id); if(!it) return; if(state.points < it.cost){ alert('No tienes suficientes puntos'); return;} state.points -= it.cost; state.inventory.push(Object.assign({},it,{invId:uid()})); renderAll(); if(currentView === 'store') renderStore();
+  try{ coinSound.currentTime = 0; coinSound.play(); }catch(e){}
+}
 function useInventory(invId){ const idx = state.inventory.findIndex(i=>i.invId===invId); if(idx===-1) return; alert('¡Felicidades! Has usado tu recompensa.'); state.inventory.splice(idx,1); renderAll(); }
 
 /* Wish modal handlers */

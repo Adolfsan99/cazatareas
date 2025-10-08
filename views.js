@@ -10,7 +10,6 @@ let currentView = 'tasks';
 export function initApp(initialState){
   state = initialState;
   state.questions = state.questions || [];
-  state.rules = state.rules || [];
   state.wishes = state.wishes || [];
   state.events = state.events || []; // ensure events array exists
   // removed automatic seeding of sample data so user data is never overwritten or replaced
@@ -28,7 +27,6 @@ function renderAll(){
   renderWishes();
   renderEvents();
   renderQuestions();
-  renderRules();
   updateInventoryButtonCount();
   DB.save(state);
 }
@@ -183,28 +181,7 @@ function renderQuestions(){
   }});
 }
 
-/* Rules (single-field CRUD) */
-function renderRules(){
-  const ul = q('#rules-list'); if(!ul) return;
-  ul.innerHTML = '';
-  (state.rules||[]).forEach(r=>{
-    const li = document.createElement('li');
-    li.className = 'trigger-item';
-    li.dataset.id = r.id;
-    li.innerHTML = `<div class="trigger-phrase"><span class="part then">${escapeHtml(r.text)}</span></div>
-      <div class="controls"><button class="edit-rule">✎</button><button class="delete-rule">🗑️</button></div>`;
-    li.querySelector('.edit-rule').addEventListener('click',()=>openRuleModal(r));
-    li.querySelector('.delete-rule').addEventListener('click',()=>{ if(confirm('Eliminar regla?')) { state.rules = state.rules.filter(x=>x.id!==r.id); renderAll(); }});
-    ul.appendChild(li);
-  });
-  // enable drag/drop and recreate sortable after render
-  if(ul.__sortable && typeof ul.__sortable.destroy === 'function') ul.__sortable.destroy();
-  ul.__sortable = Sortable.create(ul, {animation:120, onEnd:()=>{
-    const ids = Array.from(ul.children).map(li=>li.dataset.id);
-    state.rules = ids.map(id=>state.rules.find(r=>r.id===id));
-    DB.save(state);
-  }});
-}
+/* 'Leyes' eliminado (renderRules removido) */
 
 /* Store & Inventory */
 function renderStore(){
@@ -403,7 +380,14 @@ function unmarkFromVault(id, recycle){
 function buyItem(id){ const it = state.store.find(s=>s.id===id); if(!it) return; if(state.points < it.cost){ alert('No tienes suficientes puntos'); return;} state.points -= it.cost; state.inventory.push(Object.assign({},it,{invId:uid()})); renderAll(); if(currentView === 'store') renderStore();
   try{ coinSound.currentTime = 0; coinSound.play(); }catch(e){}
 }
-function useInventory(invId){ const idx = state.inventory.findIndex(i=>i.invId===invId); if(idx===-1) return; alert('¡Felicidades! Has usado tu recompensa.'); state.inventory.splice(idx,1); renderAll(); }
+function useInventory(invId){
+  const idx = state.inventory.findIndex(i=>i.invId===invId); if(idx===-1) return;
+  alert('¡Felicidades! Has usado tu recompensa.');
+  state.inventory.splice(idx,1);
+  renderAll();
+  // close inventory modal so UI updates (and user sees updated list when reopened)
+  closeInventoryModal();
+}
 
 /* Wish modal handlers */
 function openWishModal(wish=null){
@@ -434,16 +418,7 @@ function openQuestionModal(qobj=null){
 }
 function closeQuestionModal(){ q('#modal-backdrop').classList.add('hidden'); q('#question-modal').classList.add('hidden'); }
 
-/* Rule modal handlers */
-function openRuleModal(rule=null){
-  q('#modal-backdrop').classList.remove('hidden'); q('#rule-modal').classList.remove('hidden');
-  q('#rule-modal-title').textContent = rule? 'Editar Regla':'Crear Regla';
-  const form = q('#rule-form');
-  form.elements.ruleText.value = rule? rule.text : '';
-  form.onsubmit = (e)=>{ e.preventDefault(); const text = form.elements.ruleText.value.trim(); if(!text) return alert('Escribe la regla'); if(rule){ rule.text = text; } else { state.rules = state.rules || []; state.rules.unshift({ id: uid(), text }); } closeRuleModal(); renderAll(); };
-  q('#cancel-rule').onclick = closeRuleModal;
-}
-function closeRuleModal(){ q('#modal-backdrop').classList.add('hidden'); q('#rule-modal').classList.add('hidden'); }
+/* 'Leyes' modal handlers eliminados */
 
 /* Event modal handlers */
 function openEventModal(ev=null){
@@ -523,7 +498,7 @@ function setupUI(){
   q('#create-item-btn')?.addEventListener('click',()=>openItemModal());
   q('#create-wish-btn')?.addEventListener('click', ()=> openWishModal());
   q('#create-question-btn')?.addEventListener('click', ()=> openQuestionModal());
-  const createRuleBtn = q('#create-rule-btn'); if(createRuleBtn) createRuleBtn.addEventListener('click', ()=> openRuleModal());
+  /* createRuleBtn removed (Leyes) */
   switchView('tasks');
 }
 
@@ -581,7 +556,6 @@ function importStateFromFile(e){
       state.triggers = state.triggers || [];
       state.wishes = state.wishes || [];
       state.questions = state.questions || [];
-      state.rules = state.rules || [];
       state.store = state.store || [];
       state.inventory = state.inventory || [];
       state.vault = state.vault || [];

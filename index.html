@@ -24,12 +24,12 @@
     <div class="main-layout">
       <nav id="sidebar">
         <button data-view="tasks" class="nav-button active"><span class="nav-icon">📋</span><span class="nav-text">Tareas</span></button>
-        <button data-view="store" class="nav-button"><span class="nav-icon">🛒</span><span class="nav-text">Tienda</span></button>
-        <button data-view="events" class="nav-button"><span class="nav-icon">🗓️</span><span class="nav-text">Eventos</span></button>
         <button data-view="triggers" class="nav-button"><span class="nav-icon">⚡</span><span class="nav-text">Gatillos</span></button>
+        <button data-view="events" class="nav-button"><span class="nav-icon">🗓️</span><span class="nav-text">Eventos</span></button>
+        <button data-view="store" class="nav-button"><span class="nav-icon">🛒</span><span class="nav-text">Tienda</span></button>
         <button data-view="wishes" class="nav-button"><span class="nav-icon">🌠</span><span class="nav-text">Peticiones</span></button>
         <button data-view="questions" class="nav-button"><span class="nav-icon">❓</span><span class="nav-text">Preguntas</span></button>
-        <button data-view="rules" class="nav-button"><span class="nav-icon">📜</span><span class="nav-text">Leyes</span></button>
+        <!-- Leyes (eliminado) -->
         <button data-view="settings" class="nav-button"><span class="nav-icon">⚙️</span><span class="nav-text">Ajustes</span></button>
       </nav>
 
@@ -100,17 +100,7 @@
           </div>
         </section>
 
-        <section id="view-rules" class="view hidden-view">
-          <div class="panel-header"><h2>📜Leyes</h2>
-            <div class="store-controls">
-              <button id="create-rule-btn" class="primary">➕ Crear Ley</button>
-            </div>
-          </div>
-          <div class="view-content-area">
-            <p class="small" style="color:var(--color-muted)">Lista de leyes y reglas personales.</p>
-            <ul id="rules-list" class="triggers-list" style="margin-top:12px"></ul>
-          </div>
-        </section>
+        <!-- View 'Leyes' eliminado -->
 
         <!-- 3. Store View -->
         <section id="view-store" class="view hidden-view">
@@ -259,6 +249,9 @@
     <!-- Inventory/Rewards Modal -->
     <div id="inventory-modal" class="modal hidden" role="dialog" aria-modal="true">
       <h3 id="inventory-modal-title">Recompensas (<span id="inv-count-modal">0</span>)</h3>
+      <p class="small" style="color:var(--color-muted);margin-top:8px">
+        Gestiona tus recompensas con cuidado: usarlas refuerza hábitos y mantiene la motivación. Guarda las mejores para momentos importantes.
+      </p>
       <ul id="inventory-list" class="store-list"></ul>
       <div class="modal-actions">
         <button type="button" id="close-inventory">Cerrar</button>
@@ -313,19 +306,7 @@
       </form>
     </div>
 
-    <!-- Rule Modal -->
-    <div id="rule-modal" class="modal hidden" role="dialog" aria-modal="true">
-      <h3 id="rule-modal-title">Crear Ley</h3>
-      <form id="rule-form">
-        <label>Ley
-          <input name="ruleText" required maxlength="140" placeholder="Escribe tu regla..." />
-        </label>
-        <div class="modal-actions">
-          <button type="submit" class="primary">Guardar</button>
-          <button type="button" id="cancel-rule">Cancelar</button>
-        </div>
-      </form>
-    </div>
+    <!-- Modal de Leyes eliminado -->
 
     <!-- Event Modal -->
     <div id="event-modal" class="modal hidden" role="dialog" aria-modal="true">

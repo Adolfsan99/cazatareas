@@ -280,8 +280,11 @@
     <div id="wish-modal" class="modal hidden" role="dialog" aria-modal="true">
       <h3 id="wish-modal-title">Crear Petición</h3>
       <form id="wish-form">
-        <label>Petición
-          <input name="wish" required maxlength="140" placeholder="Escribe tu deseo..." />
+        <label>Título / Petición
+          <input name="qtext" required maxlength="140" placeholder="Título de la petición..." />
+        </label>
+        <label>Descripción (opcional)
+          <textarea name="answer" placeholder="Detalles..." rows="6" style="resize:vertical;min-height:80px"></textarea>
         </label>
         <div class="modal-actions">
           <button type="submit" class="primary">Guardar</button>

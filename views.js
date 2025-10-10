@@ -116,10 +116,15 @@ function renderWishes(){
     const li = document.createElement('li');
     li.className = 'trigger-item';
     li.dataset.id = w.id;
-    li.innerHTML = `<div class="trigger-phrase"><span class="part then">${escapeHtml(w.text)}</span></div>
-      <div class="controls"><button class="edit-wish">✎</button><button class="delete-wish">🗑️</button></div>`;
+    li.innerHTML = `
+      <div class="q-top">
+        <div class="q-title">${escapeHtml(w.qtext||w.title||'')}</div>
+        <div class="q-controls"><button class="edit-wish">✎</button><button class="delete-wish">🗑️</button></div>
+      </div>
+      <div class="q-bottom">${w.answer ? escapeHtml(w.answer) : ''}</div>
+    `;
     li.querySelector('.edit-wish').addEventListener('click',()=>openWishModal(w));
-    li.querySelector('.delete-wish').addEventListener('click',()=>{ if(confirm('Eliminar deseo?')) { state.wishes = state.wishes.filter(x=>x.id!==w.id); renderAll(); }});
+    li.querySelector('.delete-wish').addEventListener('click',()=>{ if(confirm('Eliminar petición?')) { state.wishes = state.wishes.filter(x=>x.id!==w.id); renderAll(); }});
     ul.appendChild(li);
   });
   // enable drag/drop and recreate sortable after render
@@ -398,10 +403,18 @@ function useInventory(invId){
 /* Wish modal handlers */
 function openWishModal(wish=null){
   q('#modal-backdrop').classList.remove('hidden'); q('#wish-modal').classList.remove('hidden');
-  q('#wish-modal-title').textContent = wish? 'Editar Deseo':'Crear Deseo';
+  q('#wish-modal-title').textContent = wish? 'Editar Petición':'Crear Petición';
   const form = q('#wish-form');
-  form.elements.wish.value = wish? wish.text : '';
-  form.onsubmit = (e)=>{ e.preventDefault(); const text = form.elements.wish.value.trim(); if(!text) return alert('Escribe algo para el deseo'); if(wish){ wish.text = text; } else { state.wishes = state.wishes || []; state.wishes.unshift({ id: uid(), text }); } closeWishModal(); renderAll(); };
+  form.elements.qtext.value = wish? (wish.qtext||wish.title||'') : '';
+  form.elements.answer.value = wish? (wish.answer||'') : '';
+  form.onsubmit = (e)=>{ e.preventDefault();
+    const qtext = form.elements.qtext.value.trim();
+    const answer = form.elements.answer.value.trim();
+    if(!qtext) return alert('Escribe el título de la petición');
+    if(wish){ wish.qtext = qtext; wish.answer = answer; }
+    else { state.wishes = state.wishes || []; state.wishes.unshift({ id: uid(), qtext, answer }); }
+    closeWishModal(); renderAll();
+  };
   q('#cancel-wish').onclick = closeWishModal;
 }
 function closeWishModal(){ q('#modal-backdrop').classList.add('hidden'); q('#wish-modal').classList.add('hidden'); }

@@ -545,6 +545,63 @@ img.thumb{width:70px;height:70px;object-fit:cover;border-radius:8px;margin-right
   font-size: 0.95em;
 }
 
+/* Notes (Anotaciones) view: align title & description to the left and allow long content */
+#view-notes .trigger-item {
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  padding:0;
+  gap:0;
+  overflow:visible;
+  border-radius:var(--radius);
+  border:1px solid var(--color-border);
+  background:var(--color-bg-card);
+  margin-bottom:10px;
+  box-shadow: var(--shadow-xs);
+}
+#view-notes .q-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 14px; /* reduced vertical padding to save space */
+  gap:8px;
+  border-bottom:1px solid var(--color-border);
+  background:var(--color-bg-item);
+}
+#view-notes .q-title {
+  text-align:left;
+  word-break:break-word;
+  white-space:pre-wrap;
+  font-weight:700;
+  color:var(--color-text);
+  font-size:1.05em;
+  margin:0;
+  flex:1 1 auto; /* let title take remaining horizontal space */
+}
+#view-notes .q-controls { display:flex; gap:8px; align-items:center; flex-shrink:0; }
+#view-notes .q-controls button { padding:6px 10px; min-width:36px; }
+
+#view-notes .q-bottom {
+  padding:14px 18px;
+  color:var(--color-muted);
+  text-align:left;
+  white-space:pre-wrap;
+  word-break:break-word;
+  background: var(--color-bg-card);
+}
+
+#view-notes .q-top .q-controls, #view-notes .q-controls {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-shrink:0;
+  margin-left:12px;
+}
+
+/* Ensure modal textarea can grow naturally */
+.modal textarea { min-height:80px; resize:vertical; }
+
 /* Mobile specific overrides */
 @media (max-width: 600px) {
   .columns {

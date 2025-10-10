@@ -26,7 +26,7 @@ function renderAll(){
   renderTriggers();
   renderWishes();
   renderEvents();
-  renderQuestions();
+  renderNotes();
   updateInventoryButtonCount();
   DB.save(state);
 }
@@ -153,30 +153,35 @@ function renderEvents(){
   }});
 }
 
-/* Questions (question + optional answer CRUD) */
-function renderQuestions(){
-  const ul = q('#questions-list'); if(!ul) return;
+/* New: renderNotes (renamed from renderQuestions) */
+function renderNotes(){
+  const ul = q('#notes-list'); if(!ul) return;
   ul.innerHTML = '';
-  (state.questions||[]).forEach(item=>{
+  (state.notes||state.questions||[]).forEach(item=>{
     const li = document.createElement('li');
     li.className = 'trigger-item';
     li.dataset.id = item.id;
     li.innerHTML = `
       <div class="q-top">
         <div class="q-title">${escapeHtml(item.qtext)}</div>
-        <div class="q-controls"><button class="edit-q">✎</button><button class="delete-q">🗑️</button></div>
+        <div class="q-controls"><button class="edit-note">✎</button><button class="delete-note">🗑️</button></div>
       </div>
       <div class="q-bottom">${item.answer ? escapeHtml(item.answer) : ''}</div>
     `;
-    li.querySelector('.edit-q').addEventListener('click',()=>openQuestionModal(item));
-    li.querySelector('.delete-q').addEventListener('click',()=>{ if(confirm('Eliminar pregunta?')) { state.questions = state.questions.filter(q=>q.id!==item.id); renderAll(); }});
+    li.querySelector('.edit-note').addEventListener('click',()=>openNoteModal(item));
+    li.querySelector('.delete-note').addEventListener('click',()=>{ if(confirm('Eliminar anotación?')) { 
+      // support both state.notes and state.questions storage
+      if(state.notes) state.notes = state.notes.filter(n=>n.id!==item.id);
+      else state.questions = state.questions.filter(q=>q.id!==item.id);
+      renderAll(); 
+    }});
     ul.appendChild(li);
   });
-  // enable drag/drop and recreate sortable after render
   if(ul.__sortable && typeof ul.__sortable.destroy === 'function') ul.__sortable.destroy();
   ul.__sortable = Sortable.create(ul, {animation:120, onEnd:()=>{
     const ids = Array.from(ul.children).map(li=>li.dataset.id);
-    state.questions = ids.map(id=>state.questions.find(qi=>qi.id===id));
+    if(state.notes) state.notes = ids.map(id=>state.notes.find(n=>n.id===id));
+    else state.questions = ids.map(id=>state.questions.find(q=>q.id===id));
     DB.save(state);
   }});
 }
@@ -373,6 +378,7 @@ function unmarkFromVault(id, recycle){
   const v = state.vault.splice(idx,1)[0];
   const t = state.tasks.find(tt=>tt.id===id);
   if(t){ t.completed = false; t.archived = false; if(recycle){ t.everCompleted = false; } } else { state.tasks.unshift({ id:v.id,title:v.title,emoji:v.emoji,desc:v.desc,due:null,points:v.points,archived:false,completed:false,everCompleted: recycle?false:true }); }
+  closeVaultModal();
   renderAll();
 }
 
@@ -400,23 +406,23 @@ function openWishModal(wish=null){
 }
 function closeWishModal(){ q('#modal-backdrop').classList.add('hidden'); q('#wish-modal').classList.add('hidden'); }
 
-/* Question modal handlers */
-function openQuestionModal(qobj=null){
-  q('#modal-backdrop').classList.remove('hidden'); q('#question-modal').classList.remove('hidden');
-  q('#question-modal-title').textContent = qobj? 'Editar Pregunta':'Crear Pregunta';
-  const form = q('#question-form');
-  form.elements.qtext.value = qobj? qobj.qtext : '';
-  form.elements.answer.value = qobj? qobj.answer || '' : '';
+/* New note modal handlers mapped to note DOM */
+function openNoteModal(nobj=null){
+  q('#modal-backdrop').classList.remove('hidden'); q('#note-modal').classList.remove('hidden');
+  q('#note-modal-title').textContent = nobj? 'Editar Anotación':'Crear Anotación';
+  const form = q('#note-form');
+  form.elements.qtext.value = nobj? nobj.qtext : '';
+  form.elements.answer.value = nobj? nobj.answer || '' : '';
   form.onsubmit = (e)=>{ e.preventDefault();
     const qtext = form.elements.qtext.value.trim();
     const answer = form.elements.answer.value.trim();
-    if(!qtext) return alert('Escribe la pregunta');
-    if(qobj){ qobj.qtext = qtext; qobj.answer = answer; } else { state.questions.unshift({ id: uid(), qtext, answer }); }
-    closeQuestionModal(); renderAll();
+    if(!qtext) return alert('Escribe la anotación');
+    if(nobj){ nobj.qtext = qtext; nobj.answer = answer; } else { state.notes = state.notes || []; state.notes.unshift({ id: uid(), qtext, answer }); }
+    closeNoteModal(); renderAll();
   };
-  q('#cancel-question').onclick = closeQuestionModal;
+  q('#cancel-note').onclick = closeNoteModal;
 }
-function closeQuestionModal(){ q('#modal-backdrop').classList.add('hidden'); q('#question-modal').classList.add('hidden'); }
+function closeNoteModal(){ q('#modal-backdrop').classList.add('hidden'); q('#note-modal').classList.add('hidden'); }
 
 /* 'Leyes' modal handlers eliminados */
 
@@ -497,7 +503,7 @@ function setupUI(){
   
   q('#create-item-btn')?.addEventListener('click',()=>openItemModal());
   q('#create-wish-btn')?.addEventListener('click', ()=> openWishModal());
-  q('#create-question-btn')?.addEventListener('click', ()=> openQuestionModal());
+  q('#create-note-btn')?.addEventListener('click', ()=> openNoteModal());
   /* createRuleBtn removed (Leyes) */
   switchView('tasks');
 }

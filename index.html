@@ -26,11 +26,12 @@
         <button data-view="tasks" class="nav-button active"><span class="nav-icon">📋</span><span class="nav-text">Tareas</span></button>
         <button data-view="triggers" class="nav-button"><span class="nav-icon">⚡</span><span class="nav-text">Gatillos</span></button>
         <button data-view="events" class="nav-button"><span class="nav-icon">🗓️</span><span class="nav-text">Eventos</span></button>
-        <button data-view="store" class="nav-button"><span class="nav-icon">🛒</span><span class="nav-text">Tienda</span></button>
+        <button data-view="notes" class="nav-button"><span class="nav-icon">🗒️</span><span class="nav-text">Anotaciones</span></button>
         <button data-view="wishes" class="nav-button"><span class="nav-icon">🌠</span><span class="nav-text">Peticiones</span></button>
-        <button data-view="questions" class="nav-button"><span class="nav-icon">❓</span><span class="nav-text">Preguntas</span></button>
-        <!-- Leyes (eliminado) -->
+        <button data-view="store" class="nav-button"><span class="nav-icon">🛒</span><span class="nav-text">Tienda</span></button>
         <button data-view="settings" class="nav-button"><span class="nav-icon">⚙️</span><span class="nav-text">Ajustes</span></button>
+        <!-- Leyes (eliminado) -->
+        
       </nav>
 
       <div id="content-views">
@@ -88,19 +89,7 @@
           </div>
         </section>
 
-        <section id="view-questions" class="view hidden-view">
-          <div class="panel-header"><h2>❓Preguntas</h2>
-            <div class="store-controls">
-              <button id="create-question-btn" class="primary">➕ Crear Pregunta</button>
-            </div>
-          </div>
-          <div class="view-content-area">
-            <p class="small" style="color:var(--color-muted)">Colección de preguntas y sus respuestas.</p>
-            <ul id="questions-list" class="triggers-list" style="margin-top:12px"></ul>
-          </div>
-        </section>
-
-        <!-- View 'Leyes' eliminado -->
+        <!-- Questions view removed (merged into Anotaciones) -->
 
         <!-- 3. Store View -->
         <section id="view-store" class="view hidden-view">
@@ -155,6 +144,18 @@
               <p class="small" style="color:var(--color-muted);margin-top:8px">Usa estas opciones para exportar e importar los datos de la aplicación (localStorage).</p>
             </div>
 
+          </div>
+        </section>
+
+        <section id="view-notes" class="view hidden-view">
+          <div class="panel-header"><h2>🗒️Anotaciones</h2>
+            <div class="store-controls">
+              <button id="create-note-btn" class="primary">➕ Crear Anotación</button>
+            </div>
+          </div>
+          <div class="view-content-area">
+            <p class="small" style="color:var(--color-muted)">Colección de anotaciones y notas rápidas — aquí también puedes plantear y registrar preguntas si lo necesitas.</p>
+            <ul id="notes-list" class="triggers-list" style="margin-top:12px"></ul>
           </div>
         </section>
       </div>
@@ -289,24 +290,7 @@
       </form>
     </div>
 
-    <!-- Question Modal -->
-    <div id="question-modal" class="modal hidden" role="dialog" aria-modal="true">
-      <h3 id="question-modal-title">Crear Pregunta</h3>
-      <form id="question-form">
-        <label>Pregunta
-          <input name="qtext" required maxlength="140" placeholder="¿Qué deberías revisar?" />
-        </label>
-        <label>Contestar (opcional)
-          <input name="answer" maxlength="300" placeholder="Escribe la respuesta..." />
-        </label>
-        <div class="modal-actions">
-          <button type="submit" class="primary">Guardar</button>
-          <button type="button" id="cancel-question">Cancelar</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Modal de Leyes eliminado -->
+    <!-- Question modal removed; use Anotaciones for questions -->
 
     <!-- Event Modal -->
     <div id="event-modal" class="modal hidden" role="dialog" aria-modal="true">
@@ -323,6 +307,22 @@
           <button type="submit" class="primary">Guardar</button>
           <button type="button" id="cancel-event">Cancelar</button>
           <button type="button" id="delete-event" class="delete hidden">Eliminar</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="note-modal" class="modal hidden" role="dialog" aria-modal="true">
+      <h3 id="note-modal-title">Crear Anotación</h3>
+      <form id="note-form">
+        <label>Título / Nota
+          <input name="qtext" required maxlength="140" placeholder="Escribe una anotación..." />
+        </label>
+        <label>Contenido (opcional)
+          <textarea name="answer" placeholder="Detalles..." rows="6" style="resize:vertical;min-height:80px"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="submit" class="primary">Guardar</button>
+          <button type="button" id="cancel-note">Cancelar</button>
         </div>
       </form>
     </div>

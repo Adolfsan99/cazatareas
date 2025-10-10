@@ -16,7 +16,7 @@ export function calcLevel(state){
   return Math.floor((state.points||0)/10000);
 }
 
-/* New: create a shallow Proxy that auto-saves on any property set/delete */
+// ensure compatibility: keep state.questions fallback but recommend notes key
 export function createAutoSaveState(obj, saveFn){
   return new Proxy(obj, {
     set(target, prop, value){
